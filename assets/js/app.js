@@ -204,9 +204,7 @@ class MovieApp {
   }
 
   createMovieCard(movie) {
-    const year = movie.release_date
-      ? new Date(movie.release_date).getFullYear()
-      : "N/A";
+    const year = movie.release_date ? new Date(movie.release_date) : "N/A";
     const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
     const posterUrl = movie.poster_path
       ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
