@@ -1,31 +1,27 @@
 <?php
-require_once 'models/TMDBModel.php';
+require_once __DIR__ . '/../models/TMDBModel.php';
 
+class MovieController
+{
+    private $tmdb;
 
-class MovieController {
-    private $tmdbModel;
-    
-    public function __construct() {
-        $this->tmdbModel = new TMDBModel();
+    public function __construct()
+    {
+        $this->tmdb = new TMDBModel();
     }
-    
-    public function getGenres() {
-        return $this->tmdbModel->getGenres();
+
+    public function getGenres()
+    {
+        return $this->tmdb->getGenres();
     }
-    
-    public function discoverMovies($filters) {
-        return $this->tmdbModel->discoverMovies($filters);
+
+    public function discoverMovies($filters = [], $page = 1, $type = 'movie')
+    {
+        return $this->tmdb->discoverMovies($filters, $page, $type);
     }
-    
-    public function searchMovies($query) {
-        return $this->tmdbModel->searchMovies($query);
-    }
-    
-    public function getRandomMovie($movies) {
-        if (!empty($movies)) {
-            return $movies[array_rand($movies)];
-        }
-        return null;
+
+    public function searchAll($query, $page = 1)
+    {
+        return $this->tmdb->searchAll($query, $page);
     }
 }
-?>
