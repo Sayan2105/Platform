@@ -156,7 +156,7 @@ class MovieApp {
       <p>Hmmm saale, naughty horha.</p>
       <div style="margin-top:1.5rem;">
         <button id="cancelAdult" style="margin-right:1rem; padding: 0.5rem 1rem;">Cancel</button>
-        <button id="confirmAdult" style="background-color:#e11d48; color:white; padding: 0.5rem 1rem;">😈</button>
+        <button id="confirmAdult" style="background-color:#ff008c9d; color:white; padding: 0.5rem 1rem;">😈😈😈</button>
       </div>
     `;
     modal.appendChild(modalContent);
@@ -168,7 +168,7 @@ class MovieApp {
 
     document.getElementById("confirmAdult").addEventListener("click", () => {
       // Redirect to porn website as a fun easter egg
-      window.location.href = "https://www.google.com/search?q=pornhub.com";
+      window.open("https://www.google.com/search?q=pornhub.com", "_blank");
     });
   }
 
@@ -318,7 +318,7 @@ class MovieApp {
       : "N/A";
     const rating = movie.vote_average ? movie.vote_average : "N/A";
     const posterUrl = movie.poster_path
-      ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+      ? `https://imae.tmdb.org/t/p/w300${movie.poster_path}`
       : "assets/images/placeholder-poster.jpg";
 
     return `
@@ -369,9 +369,10 @@ class MovieApp {
                     </div>
                     
                     <div class="flex gap-2">
-                        <button class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors">
-                            View Details
-                        </button>
+                    <a href="views/movie.php?id=${movie.id}" 
+                       class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md flex justify-center items-center transition-colors rounded-md">
+                       View Detail
+                    </a>
                         <button class="px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors">
                             ❤️
                         </button>

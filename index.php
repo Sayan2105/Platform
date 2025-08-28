@@ -16,21 +16,6 @@ $genres = $movieController->getGenres();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><?= APP_NAME ?> - <?= APP_TAGLINE ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-    </style>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
