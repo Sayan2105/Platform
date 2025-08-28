@@ -3,23 +3,102 @@ class MovieApp {
     this.selectedGenres = [];
     this.currentMovies = [];
     this.maxGenres = 3;
+    this.allGenres = [
+      { id: "28", name: "Action" },
+      { id: "12", name: "Adventure" },
+      { id: "16", name: "Animation" },
+      { id: "35", name: "Comedy" },
+      { id: "80", name: "Crime" },
+      { id: "99", name: "Documentary" },
+      { id: "18", name: "Drama" },
+      { id: "10751", name: "Family" },
+      { id: "14", name: "Fantasy" },
+      { id: "36", name: "History" },
+      { id: "27", name: "Horror" },
+      { id: "10402", name: "Music" },
+      { id: "9648", name: "Mystery" },
+      { id: "10749", name: "Romance" },
+      { id: "878", name: "Science Fiction" },
+      { id: "10770", name: "TV Movie" },
+    ];
 
     this.init();
   }
 
   init() {
+    this.renderGenres();
     this.setupEventListeners();
     this.updateSliderValues();
-    this.checkDarkMode();
+  }
+
+  // Dynamically render genres with top 8 visible, rest hidden initially
+  renderGenres() {
+    const container = document.getElementById("genreContainer");
+    container.innerHTML = "";
+
+    // Show top 8 genres visible
+    this.allGenres.forEach((genre, index) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "genre-btn px-3 py-2 mb-2 text-sm border rounded-md transition-colors " +
+        "bg-white dark:bg-neutral-700 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-neutral-600 border-gray-300 dark:border-neutral-600";
+      btn.dataset.genreId = genre.id;
+      btn.dataset.genreName = genre.name;
+      btn.textContent = genre.name;
+
+      // Hide genres beyond top 8 initially
+      if (index >= 8) {
+        btn.style.display = "none";
+      }
+      container.appendChild(btn);
+    });
+
+    // Add "Show More" / "Show Less" Button
+    const showMoreBtn = document.createElement("button");
+    showMoreBtn.id = "showMoreGenres";
+    showMoreBtn.textContent = "Show More";
+    showMoreBtn.className =
+      "px-3 py-2 mt-2 text-sm rounded-md font-semibold bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-gray-200";
+
+    container.appendChild(showMoreBtn);
+
+    // Add 18+ Button separately
+    const adultBtn = document.createElement("button");
+    adultBtn.id = "adultConfirmBtn";
+    adultBtn.textContent = "18+";
+    adultBtn.className =
+      "px-3 py-2 mt-2 ml-4 text-sm rounded-md font-bold bg-red-600 text-white hover:bg-red-700";
+    container.appendChild(adultBtn);
+
+    // Setup Show More toggle listener
+    showMoreBtn.addEventListener("click", () => {
+      const hiddenGenres = Array.from(
+        container.querySelectorAll("button.genre-btn")
+      ).filter((b, i) => i >= 8);
+
+      const isHidden = hiddenGenres.some((b) => b.style.display === "none");
+
+      hiddenGenres.forEach((btn) => {
+        btn.style.display = isHidden ? "inline-block" : "none";
+      });
+
+      showMoreBtn.textContent = isHidden ? "Show Less" : "Show More";
+    });
+
+    // Setup 18+ adult confirmation modal listener
+    adultBtn.addEventListener("click", () => {
+      this.showAdultModal();
+    });
   }
 
   setupEventListeners() {
-    // Genre selection
+    // Attach genre button listeners (including dynamically shown genres)
     document.querySelectorAll(".genre-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => this.toggleGenre(e));
     });
 
-    // Sliders
+    // Sliders and other buttons as before...
     const sliders = ["minRuntime", "maxRuntime", "minRating"];
     sliders.forEach((id) => {
       const slider = document.getElementById(id);
@@ -28,23 +107,19 @@ class MovieApp {
       }
     });
 
-    // Buttons
-    const findBtn = document.getElementById("findMovies");
-    const randomBtn = document.getElementById("randomMovie");
-    const clearBtn = document.getElementById("clearFilters");
-    const searchBtn = document.getElementById("searchBtn");
-    const darkToggle = document.getElementById("darkModeToggle");
+    document
+      .getElementById("findMovies")
+      ?.addEventListener("click", () => this.findMovies());
+    document
+      .getElementById("randomMovie")
+      ?.addEventListener("click", () => this.getRandomMovie());
+    document
+      .getElementById("clearFilters")
+      ?.addEventListener("click", () => this.clearFilters());
+    document
+      .getElementById("searchBtn")
+      ?.addEventListener("click", () => this.searchMovies());
 
-    if (findBtn) findBtn.addEventListener("click", () => this.findMovies());
-    if (randomBtn)
-      randomBtn.addEventListener("click", () => this.getRandomMovie());
-    if (clearBtn) clearBtn.addEventListener("click", () => this.clearFilters());
-    if (searchBtn)
-      searchBtn.addEventListener("click", () => this.searchMovies());
-    if (darkToggle)
-      darkToggle.addEventListener("click", () => this.toggleDarkMode());
-
-    // Search on Enter
     const searchInput = document.getElementById("movieSearch");
     if (searchInput) {
       searchInput.addEventListener("keypress", (e) => {
@@ -53,13 +128,55 @@ class MovieApp {
     }
   }
 
+  // Adult modal with confirm or cancel, then redirects on confirm
+  showAdultModal() {
+    // Create modal elements
+    const modal = document.createElement("div");
+    modal.id = "adultModal";
+    modal.style.position = "fixed";
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.backgroundColor = "rgba(0,0,0,0.5)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = 9999;
+
+    const modalContent = document.createElement("div");
+    modalContent.style.backgroundColor = "white";
+    modalContent.style.padding = "2rem";
+    modalContent.style.borderRadius = "8px";
+    modalContent.style.textAlign = "center";
+    modalContent.style.maxWidth = "300px";
+
+    modalContent.innerHTML = `
+      <h2 style="font-weight:bold; margin-bottom:1rem;">Age Confirmation</h2>
+      <p>Hmmm saale, naughty horha.</p>
+      <div style="margin-top:1.5rem;">
+        <button id="cancelAdult" style="margin-right:1rem; padding: 0.5rem 1rem;">Cancel</button>
+        <button id="confirmAdult" style="background-color:#e11d48; color:white; padding: 0.5rem 1rem;">😈</button>
+      </div>
+    `;
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    document.getElementById("cancelAdult").addEventListener("click", () => {
+      document.body.removeChild(modal);
+    });
+
+    document.getElementById("confirmAdult").addEventListener("click", () => {
+      // Redirect to porn website as a fun easter egg
+      window.location.href = "https://www.google.com/search?q=pornhub.com";
+    });
+  }
+
   toggleGenre(e) {
     const btn = e.target;
     const genreId = btn.dataset.genreId;
-    const genreName = btn.dataset.genreName;
 
     if (this.selectedGenres.includes(genreId)) {
-      // Remove genre
       this.selectedGenres = this.selectedGenres.filter((id) => id !== genreId);
       btn.classList.remove(
         "bg-blue-100",
@@ -79,9 +196,7 @@ class MovieApp {
 
   updateSelectedCount() {
     const counter = document.getElementById("selectedCount");
-    if (counter) {
-      counter.textContent = this.selectedGenres.length;
-    }
+    if (counter) counter.textContent = this.selectedGenres.length;
   }
 
   updateSliderValues() {
@@ -89,23 +204,19 @@ class MovieApp {
     const maxRuntime = document.getElementById("maxRuntime");
     const minRating = document.getElementById("minRating");
 
-    if (minRuntime) {
+    if (minRuntime)
       document.getElementById("minRuntimeValue").textContent =
         minRuntime.value + " min";
-    }
-    if (maxRuntime) {
+    if (maxRuntime)
       document.getElementById("maxRuntimeValue").textContent =
         maxRuntime.value + " min";
-    }
-    if (minRating) {
+    if (minRating)
       document.getElementById("minRatingValue").textContent =
         minRating.value + " ⭐";
-    }
   }
 
   async findMovies() {
     this.showLoading(true);
-
     const filters = this.getFilters();
 
     try {
@@ -114,8 +225,8 @@ class MovieApp {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filters),
       });
-
       const data = await response.json();
+
       this.currentMovies = data.movies || [];
       this.displayMovies(this.currentMovies);
     } catch (error) {
@@ -138,8 +249,8 @@ class MovieApp {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
       });
-
       const data = await response.json();
+
       this.currentMovies = data.movies || [];
       this.displayMovies(this.currentMovies);
     } catch (error) {
@@ -192,20 +303,20 @@ class MovieApp {
       return;
     }
 
-    // Update counter
     if (movieCount) movieCount.textContent = movies.length;
     counter.classList.remove("hidden");
     noResults.classList.add("hidden");
 
-    // Render movies
     grid.innerHTML = movies
       .map((movie) => this.createMovieCard(movie))
       .join("");
   }
 
   createMovieCard(movie) {
-    const year = movie.release_date ? new Date(movie.release_date) : "N/A";
-    const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
+    const year = movie.release_date
+      ? new Date(movie.release_date).getFullYear()
+      : "N/A";
+    const rating = movie.vote_average ? movie.vote_average : "N/A";
     const posterUrl = movie.poster_path
       ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
       : "assets/images/placeholder-poster.jpg";
@@ -270,67 +381,13 @@ class MovieApp {
         `;
   }
 
-  clearFilters() {
-    // Reset genres
-    this.selectedGenres = [];
-    document.querySelectorAll(".genre-btn").forEach((btn) => {
-      btn.classList.remove(
-        "bg-blue-100",
-        "dark:bg-blue-900",
-        "border-blue-500"
-      );
-      btn.classList.add("bg-white", "dark:bg-neutral-700");
-    });
-
-    // Reset sliders
-    document.getElementById("minRuntime").value = 90;
-    document.getElementById("maxRuntime").value = 150;
-    document.getElementById("minRating").value = 6;
-
-    // Reset search
-    document.getElementById("movieSearch").value = "";
-
-    // Update displays
-    this.updateSelectedCount();
-    this.updateSliderValues();
-
-    // Clear results
-    document.getElementById("moviesGrid").innerHTML = "";
-    document.getElementById("resultsCounter").classList.add("hidden");
-    document.getElementById("noResults").classList.add("hidden");
-  }
-
   showLoading(show) {
     const spinner = document.getElementById("loadingSpinner");
-    if (spinner) {
-      spinner.classList.toggle("hidden", !show);
-    }
+    if (spinner) spinner.classList.toggle("hidden", !show);
   }
 
   showError(message) {
-    // You can implement a toast notification here
     alert(message);
-  }
-
-  toggleDarkMode() {
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem(
-      "darkMode",
-      document.documentElement.classList.contains("dark")
-    );
-
-    const toggle = document.getElementById("darkModeToggle");
-    toggle.textContent = document.documentElement.classList.contains("dark")
-      ? "☀️"
-      : "🌙";
-  }
-
-  checkDarkMode() {
-    const isDark = localStorage.getItem("darkMode") === "true";
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      document.getElementById("darkModeToggle").textContent = "☀️";
-    }
   }
 }
 

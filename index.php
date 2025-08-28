@@ -40,7 +40,7 @@ $genres = $movieController->getGenres();
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white"><?= APP_NAME ?></h1>
                 <p class="text-gray-600 dark:text-gray-400"><?= APP_TAGLINE ?></p>
             </div>
-            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-neutral-700 text-gray-700 dark:text-gray-300">Go Dark</button>
+            <!-- <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-neutral-700 text-gray-700 dark:text-gray-300">Go Dark</button> -->
         </div>
     </header>
     <main class="max-w-7xl mx-auto px-4 py-8">
