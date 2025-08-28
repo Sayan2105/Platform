@@ -318,7 +318,7 @@ class MovieApp {
       : "N/A";
     const rating = movie.vote_average ? movie.vote_average : "N/A";
     const posterUrl = movie.poster_path
-      ? `https://imae.tmdb.org/t/p/w300${movie.poster_path}`
+      ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
       : "assets/images/placeholder-poster.jpg";
 
     return `
